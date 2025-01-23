@@ -1,10 +1,21 @@
 from rest_framework import serializers
 from escola.models import Estudante, Curso, Matricula
+from escola.validators import cpf_invalido, nome_invalido, celular_invalido
 
 class EstudanteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estudante
         fields = "__all__"
+
+    def validate(self, attrs):
+        if cpf_invalido(attrs["cpf"]):
+            raise serializers.ValidationError({"cpf":"O cpf deve ter 11 digitos"})
+        if nome_invalido(attrs["nome"]):
+            raise serializers.ValidationError({"nome":"Nome error"})
+        if celular_invalido(attrs["celular"]):
+            raise serializers.ValidationError( { "celular":"O celular deve ter 13 digitos"})
+        return attrs
+    
 
 class CursoSerializer(serializers.ModelSerializer):
     class Meta:
